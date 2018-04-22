@@ -1,0 +1,6 @@
+<launch>
+
+  <node pkg="dvo_ros" type="camera_tracker" name="camera_tracker" output="screen" launch-prefix="valgrind --track-origins=yes --log-file=memcheck.out.camera_tracker.%p">
+  </node>
+
+</launch>

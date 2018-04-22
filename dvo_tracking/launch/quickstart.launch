@@ -1,0 +1,7 @@
+<launch>
+  <include file="$(find openni_launch)/launch/openni.launch"/>
+  <node pkg="dvo_ros" type="camera_tracker" name="camera_tracker" output="screen">
+    <param name="reconstruction" type="bool" value="true" />
+    <param name="use_weighting" type="bool" value="true" />
+  </node>
+</launch>
