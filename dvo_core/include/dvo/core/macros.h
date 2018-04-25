@@ -22,33 +22,13 @@
 #ifndef MACROS_H_
 #define MACROS_H_
 
-#define ASSERT_DEBUG
 // #define TRACE_DEBUG
-#define MARKER_DEBUG
-
-#ifndef ASSERT_DEBUG
-	#define ASSERT(x)
-#else
-	#define ASSERT(x) \
-		if(!(x)) \
-		{ \
-			std::cout << "\nERROR!! Assert failed on line " << __LINE__  << " in file " << __FILE__ << "\n"; \
-		}
-#endif /* DEBUG */
 
 #ifndef TRACE_DEBUG
-	#define TRACE()
+#define TRACE()
 #else
-	#define TRACE() \
-		std::cout << __LINE__ << " << " << __FUNCTION__ << " (" << __FILE__ << ")\n"; \
-
-#endif /* TRACE_DEBUG */
-
-#ifndef MARKER_DEBUG
-	#define TRACE_MARKER()
-#else
-	#define TRACE_MARKER() \
-		std::cout << __LINE__ << " << " << __FUNCTION__ << " (" << __FILE__ << ")\n"; \
+#define TRACE(); \
+	std::cout << __LINE__ << " << " << __FUNCTION__ << " (" << __FILE__ << ")\n"; \
 
 #endif /* TRACE_DEBUG */
 

@@ -20,6 +20,8 @@
 
 #include <dvo/dense_tracking.h>
 #include <Eigen/Eigenvalues>
+#include <dvo/core/assert.h>
+
 #line __LINE__ "dense_tracking_config.cpp"
 
 namespace dvo
@@ -30,8 +32,8 @@ DenseTracker::Config::Config() :
 	LastLevel(1),
 	MaxIterationsPerLevel(100),
 	Precision(5e-7),
-	UseInitialEstimate(true),
-	UseWeighting(true),
+	UseInitialEstimate(false),
+	UseWeighting(false),
 	Mu(0),
 	InfluenceFuntionType(dvo::core::InfluenceFunctions::TDistribution),
 	InfluenceFunctionParam(dvo::core::TDistributionInfluenceFunction::DEFAULT_DOF),
@@ -58,6 +60,8 @@ bool DenseTracker::Config::UseEstimateSmoothing() const
 bool DenseTracker::Config::IsSane() const
 {
 	TRACE()
+	bool check = (FirstLevel >= LastLevel);
+	// std::cout << "is sane: " << check << "\n";
 	return FirstLevel >= LastLevel;
 }
 

@@ -23,6 +23,7 @@
 #include <tbb/task_scheduler_init.h>
 #include <tbb/task.h>
 #include <iostream>
+#include <dvo/core/assert.h>
 
 #include <valgrind/memcheck.h>
 #line __LINE__ "async_point_cloud_builder.cpp"

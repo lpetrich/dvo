@@ -27,7 +27,7 @@ find_package(catkin REQUIRED COMPONENTS
 set(INSTALL_DIR/usr/local)
 
 generate_dynamic_reconfigure_options( 
-	cfg/dvo.cfg
+	cfg/dvo_ros.cfg
 )  
 
 catkin_package(
@@ -43,6 +43,7 @@ add_library(${PROJECT_NAME}
 		src/camera_dense_tracking.cpp
 		src/visualization/ros_camera_trajectory_visualizer.cpp
 )
+
 target_link_libraries(${PROJECT_NAME} 
 		dvo_core
 		dvo_visualization
@@ -55,6 +56,7 @@ target_link_libraries(${PROJECT_NAME}
 add_library(camera_tracker_nodelet
 		src/camera_tracker_nodelet.cpp
 )
+
 target_link_libraries(camera_tracker_nodelet
 	dvo_core
 	dvo_visualization

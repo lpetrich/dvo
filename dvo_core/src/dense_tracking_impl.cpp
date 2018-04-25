@@ -168,6 +168,8 @@ void computeResidualsSse(const PointIterator& first_point, const PointIterator& 
 
 	unsigned int rnd_mode = _MM_GET_ROUNDING_MODE();
 
+	// std::cout << "\tlooping over all points (depthStdDevZ)\n";
+
 	if(rnd_mode != _MM_ROUND_TOWARD_ZERO) _MM_SET_ROUNDING_MODE(_MM_ROUND_TOWARD_ZERO);
 
 	const PointIterator lp = ((last_point - first_point) % 2) != 0 ? last_point - 1 : last_point;

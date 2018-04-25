@@ -22,6 +22,7 @@
 #include <tbb/blocked_range.h>
 
 #include <dvo/core/weight_calculation.h>
+#include <dvo/core/assert.h>
 
 #include <dvo/util/histogram.h>
 //#include <dvo/visualization/visualizer.h>
@@ -46,6 +47,7 @@ void TDistributionScaleEstimator::configure(const float& param)
 {
 	TRACE()
 	dof = param;
+	// std::cout << "dof: " << dof << "\n";
 }
 
 float TDistributionScaleEstimator::compute(const cv::Mat& errors) const
@@ -94,6 +96,7 @@ struct TDistributionScaleReduction
 		lambda(0.0f),
 		num(0)
 	{
+		TRACE()
 	}
 
 	TDistributionScaleReduction(TDistributionScaleReduction& other, tbb::split) :
@@ -103,6 +106,7 @@ struct TDistributionScaleReduction
 		lambda(0.0f),
 		num(0)
 	{
+		TRACE()
 	}
 
 	void operator()(const tbb::blocked_range<size_t>& r)
@@ -296,18 +300,22 @@ ScaleEstimator* ScaleEstimators::get(ScaleEstimators::enum_t type)
 	switch(type)
 	{
 		case ScaleEstimators::Unit:
+			// std::cout << "Unit\n";
 			return (ScaleEstimator*)&unit;
 		case ScaleEstimators::TDistribution:
+			// std::cout << "TDistribution\n";
 			return (ScaleEstimator*)&tdistribution;
 		case ScaleEstimators::MAD:
+			// std::cout << "MAD\n";
 			return (ScaleEstimator*)&mad;
 		case ScaleEstimators::NormalDistribution:
+			// std::cout << "NormalDistribution\n";
 			return (ScaleEstimator*)&normaldistribution;
 		default:
 			break;
 	}
+	// std::cout << "shiit\n";
 	ASSERT(false && "Unknown scale estimator type!");
-
 	return 0;
 }
 
@@ -362,6 +370,7 @@ void TDistributionInfluenceFunction::configure(const float& param)
 	TRACE()
 	dof = param;
 	normalizer = dof / (dof + 1.0f);
+	// std::cout << "normalizer: " << normalizer << "\n";
 }
 
 const float HuberInfluenceFunction::DEFAULT_K = 1.345f;
@@ -409,6 +418,7 @@ const char* InfluenceFunctions::str(enum_t type)
 		default:
 			break;
 	}
+	// std::cout << "shit\n";
 	ASSERT(false && "Unknown influence function type!");
 
 	return "";
@@ -425,16 +435,21 @@ InfluenceFunction* InfluenceFunctions::get(InfluenceFunctions::enum_t type)
 	switch(type)
 	{
 		case InfluenceFunctions::Unit:
+			// std::cout << "Unit\n";
 			return (InfluenceFunction*)&unit;
 		case InfluenceFunctions::TDistribution:
+			// std::cout << "TDistribution\n";
 			return (InfluenceFunction*)&tdistribution;
 		case InfluenceFunctions::Tukey:
+			// std::cout << "tdistribution\n";
 			return (InfluenceFunction*)&tukey;
 		case InfluenceFunctions::Huber:
+			// std::cout << "tukey\n";
 			return (InfluenceFunction*)&huber;
 		default:
 			break;
 	}
+	// std::cout << "shit\n"
 	ASSERT(false && "Unknown influence function type!");
 
 	return 0;
@@ -444,6 +459,7 @@ WeightCalculation::WeightCalculation() :
 		scale_(1.0f)
 {
 	TRACE()
+	// std::cout << "scale set to: " << scale_ << "\n";
 }
 
 void WeightCalculation::calculateScale(const cv::Mat& errors)

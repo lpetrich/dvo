@@ -531,9 +531,9 @@ CameraDenseTrackerConfig::GroupDescription<CameraDenseTrackerConfig::DEFAULT, Ca
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
       __default__.scale_estimator = 2;
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
-      Default.abstract_parameters.push_back(CameraDenseTrackerConfig::AbstractParamDescriptionConstPtr(new CameraDenseTrackerConfig::ParamDescription<int>("scale_estimator", "int", 4, "", "{'enum_description': 'scale estimator', 'enum': [{'srcline': 27, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'NormalDistributionScaleEstimator'}, {'srcline': 28, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 2, 'ctype': 'int', 'type': 'int', 'name': 'TDistributionScaleEstimator'}, {'srcline': 29, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 3, 'ctype': 'int', 'type': 'int', 'name': 'MADScaleEstimator'}]}", &CameraDenseTrackerConfig::scale_estimator)));
+      Default.abstract_parameters.push_back(CameraDenseTrackerConfig::AbstractParamDescriptionConstPtr(new CameraDenseTrackerConfig::ParamDescription<int>("scale_estimator", "int", 4, "", "{'enum_description': 'scale estimator', 'enum': [{'srcline': 27, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'NormalDistributionScaleEstimator'}, {'srcline': 28, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 2, 'ctype': 'int', 'type': 'int', 'name': 'TDistributionScaleEstimator'}, {'srcline': 29, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 3, 'ctype': 'int', 'type': 'int', 'name': 'MADScaleEstimator'}]}", &CameraDenseTrackerConfig::scale_estimator)));
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
-      __param_descriptions__.push_back(CameraDenseTrackerConfig::AbstractParamDescriptionConstPtr(new CameraDenseTrackerConfig::ParamDescription<int>("scale_estimator", "int", 4, "", "{'enum_description': 'scale estimator', 'enum': [{'srcline': 27, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'NormalDistributionScaleEstimator'}, {'srcline': 28, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 2, 'ctype': 'int', 'type': 'int', 'name': 'TDistributionScaleEstimator'}, {'srcline': 29, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 3, 'ctype': 'int', 'type': 'int', 'name': 'MADScaleEstimator'}]}", &CameraDenseTrackerConfig::scale_estimator)));
+      __param_descriptions__.push_back(CameraDenseTrackerConfig::AbstractParamDescriptionConstPtr(new CameraDenseTrackerConfig::ParamDescription<int>("scale_estimator", "int", 4, "", "{'enum_description': 'scale estimator', 'enum': [{'srcline': 27, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'NormalDistributionScaleEstimator'}, {'srcline': 28, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 2, 'ctype': 'int', 'type': 'int', 'name': 'TDistributionScaleEstimator'}, {'srcline': 29, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 3, 'ctype': 'int', 'type': 'int', 'name': 'MADScaleEstimator'}]}", &CameraDenseTrackerConfig::scale_estimator)));
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
       __min__.scale_estimator_param = 0.0;
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
@@ -551,9 +551,9 @@ CameraDenseTrackerConfig::GroupDescription<CameraDenseTrackerConfig::DEFAULT, Ca
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
       __default__.influence_function = 2;
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
-      Default.abstract_parameters.push_back(CameraDenseTrackerConfig::AbstractParamDescriptionConstPtr(new CameraDenseTrackerConfig::ParamDescription<int>("influence_function", "int", 4, "", "{'enum_description': 'influence function', 'enum': [{'srcline': 34, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'TukeyInfluenceFunction'}, {'srcline': 35, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 2, 'ctype': 'int', 'type': 'int', 'name': 'TDistributionInfluenceFunction'}, {'srcline': 36, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 3, 'ctype': 'int', 'type': 'int', 'name': 'HuberInfluenceFunction'}]}", &CameraDenseTrackerConfig::influence_function)));
+      Default.abstract_parameters.push_back(CameraDenseTrackerConfig::AbstractParamDescriptionConstPtr(new CameraDenseTrackerConfig::ParamDescription<int>("influence_function", "int", 4, "", "{'enum_description': 'influence function', 'enum': [{'srcline': 34, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'TukeyInfluenceFunction'}, {'srcline': 35, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 2, 'ctype': 'int', 'type': 'int', 'name': 'TDistributionInfluenceFunction'}, {'srcline': 36, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 3, 'ctype': 'int', 'type': 'int', 'name': 'HuberInfluenceFunction'}]}", &CameraDenseTrackerConfig::influence_function)));
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
-      __param_descriptions__.push_back(CameraDenseTrackerConfig::AbstractParamDescriptionConstPtr(new CameraDenseTrackerConfig::ParamDescription<int>("influence_function", "int", 4, "", "{'enum_description': 'influence function', 'enum': [{'srcline': 34, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'TukeyInfluenceFunction'}, {'srcline': 35, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 2, 'ctype': 'int', 'type': 'int', 'name': 'TDistributionInfluenceFunction'}, {'srcline': 36, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg', 'cconsttype': 'const int', 'value': 3, 'ctype': 'int', 'type': 'int', 'name': 'HuberInfluenceFunction'}]}", &CameraDenseTrackerConfig::influence_function)));
+      __param_descriptions__.push_back(CameraDenseTrackerConfig::AbstractParamDescriptionConstPtr(new CameraDenseTrackerConfig::ParamDescription<int>("influence_function", "int", 4, "", "{'enum_description': 'influence function', 'enum': [{'srcline': 34, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 1, 'ctype': 'int', 'type': 'int', 'name': 'TukeyInfluenceFunction'}, {'srcline': 35, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 2, 'ctype': 'int', 'type': 'int', 'name': 'TDistributionInfluenceFunction'}, {'srcline': 36, 'description': '', 'srcfile': '/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg', 'cconsttype': 'const int', 'value': 3, 'ctype': 'int', 'type': 'int', 'name': 'HuberInfluenceFunction'}]}", &CameraDenseTrackerConfig::influence_function)));
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
       __min__.influence_function_param = 0.0;
 //#line 274 "/opt/ros/indigo/lib/python2.7/dist-packages/dynamic_reconfigure/parameter_generator.py"
@@ -693,25 +693,25 @@ CameraDenseTrackerConfig::GroupDescription<CameraDenseTrackerConfig::DEFAULT, Ca
     return statics;
   }
 
-//#line 17 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 17 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_RunDenseTracking = 1;
-//#line 18 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 18 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_UseDenseTrackingEstimate = 2;
-//#line 19 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 19 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_ConfigParam = 4;
-//#line 20 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 20 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_MiscParam = 8;
-//#line 27 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 27 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_NormalDistributionScaleEstimator = 1;
-//#line 28 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 28 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_TDistributionScaleEstimator = 2;
-//#line 29 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 29 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_MADScaleEstimator = 3;
-//#line 34 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 34 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_TukeyInfluenceFunction = 1;
-//#line 35 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 35 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_TDistributionInfluenceFunction = 2;
-//#line 36 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo.cfg"
+//#line 36 "/home/laura/computer_vision/dvo_workspace/src/dvo_ros/cfg/dvo_ros.cfg"
       const int CameraDenseTracker_HuberInfluenceFunction = 3;
 }
 

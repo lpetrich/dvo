@@ -1,6 +1,7 @@
 <launch>
 
-  <node pkg="dvo_ros" type="camera_tracker" name="camera_tracker" output="screen">
+  <node pkg="dvo_ros" type="camera_tracker" name="camera_tracker" output="log">
+  <!--
 	  <param name="run_dense_tracking" type="bool" value="True" />
 	  <param name="use_dense_tracking_estimate" type="bool" value="True" />
 	  <param name="coarsest_level" type="int" value="3" />
@@ -18,6 +19,7 @@
 	  <param name="lambda" type="double" value="0.0" />
 	  <param name="mu" type="double" value="0.0" />
 	  <param name="reconstruction" type="bool" value="True" />
+	  -->
   </node>
 
 </launch>

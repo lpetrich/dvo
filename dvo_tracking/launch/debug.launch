@@ -1,0 +1,6 @@
+<launch>
+
+  <node pkg="dvo_tracking" type="depth_test" name="depth_test" output="screen" launch-prefix="valgrind --leak-check=full -v --track-origins=yes --log-file=memcheck.out.depth_tracker.%p">
+  </node>
+
+</launch>

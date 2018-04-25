@@ -17,6 +17,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with dvo.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include <dvo/core/assert.h>
 
 #include <dvo/core/point_selection.h>
 #line __LINE__ "point_selection.cpp"
@@ -66,7 +67,7 @@ void PointSelection::setRgbdImagePyramid(dvo::core::RgbdImagePyramid& pyramid)
 dvo::core::RgbdImagePyramid& PointSelection::getRgbdImagePyramid()
 {
 	TRACE()
-	assert(pyramid_ != 0);
+	ASSERT(pyramid_ != 0);
 
 	return *pyramid_;
 }
@@ -97,7 +98,7 @@ bool PointSelection::getDebugIndex(const size_t& level, cv::Mat& dbg_idx)
 void PointSelection::select(const size_t& level, PointSelection::PointIterator& first_point, PointSelection::PointIterator& last_point)
 {
 	TRACE()
-	assert(pyramid_ != 0);
+	ASSERT(pyramid_ != 0);
 	pyramid_->compute(level + 1);
 	if(storage_.size() < level + 1)
 		storage_.resize(level + 1);

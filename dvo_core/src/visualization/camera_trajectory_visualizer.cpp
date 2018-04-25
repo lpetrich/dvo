@@ -29,17 +29,21 @@ namespace visualization
 class NoopCameraVisualizer : public CameraVisualizer
 {
 public:
-	NoopCameraVisualizer() {
+	NoopCameraVisualizer() 
+	{
 		TRACE()
 	}
-	virtual ~NoopCameraVisualizer() {
+	virtual ~NoopCameraVisualizer() 
+	{
 		TRACE()
 	};
 
-	virtual void show(Option option = ShowCameraAndCloud) {
+	virtual void show(Option option = ShowCameraAndCloud) 
+	{
 		TRACE()
 	};
-	virtual void hide() {
+	virtual void hide() 
+	{
 		TRACE()
 	};
 
@@ -53,11 +57,13 @@ public:
 class NoopTrajectoryVisualizer : public TrajectoryVisualizer
 {
 public:
-	NoopTrajectoryVisualizer() {
+	NoopTrajectoryVisualizer() 
+	{
 		TRACE()
 	}
 
-	virtual ~NoopTrajectoryVisualizer() {
+	virtual ~NoopTrajectoryVisualizer() 
+	{
 		TRACE()
 	}
 

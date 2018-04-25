@@ -30,7 +30,7 @@ namespace core
 
 std::size_t IntrinsicMatrix::Hash::operator ()(IntrinsicMatrix const& value) const
 {
-	// TRACE()
+	TRACE()
 	std::size_t seed = 0;
 
 	boost::hash_combine(seed, value.fx());
@@ -43,13 +43,13 @@ std::size_t IntrinsicMatrix::Hash::operator ()(IntrinsicMatrix const& value) con
 
 bool IntrinsicMatrix::Equal::operator()(IntrinsicMatrix const& left, IntrinsicMatrix const& right) const
 {
-	// TRACE()
+	TRACE()
 	return left.fx() == right.fx() && left.fy() == right.fy() && left.ox() == right.ox() && left.oy() == right.oy();
 }
 
 IntrinsicMatrix IntrinsicMatrix::create(float fx, float fy, float ox, float oy)
 {
-	TRACE()
+	// TRACE()
 	IntrinsicMatrix result;
 	result.data.setZero();
 	result.data(0, 0) = fx;
@@ -63,7 +63,8 @@ IntrinsicMatrix IntrinsicMatrix::create(float fx, float fy, float ox, float oy)
 
 IntrinsicMatrix::IntrinsicMatrix(const IntrinsicMatrix & other) : data(other.data)
 {
-	// TRACE()
+	TRACE()
+	// std::cout << "\tloop over fx, fy, ox, oy...\n";
 }
 
 Eigen::Matrix3f IntrinsicMatrix::getIntrinsicMatrix() const
@@ -97,14 +98,14 @@ float IntrinsicMatrix::oy() const
 
 void IntrinsicMatrix::invertOffset()
 {
-	// TRACE()
+	TRACE()
 	data(0, 2) *= -1;
 	data(1, 2) *= -1;
 }
 
 void IntrinsicMatrix::scale(float factor)
 {
-	// TRACE()
+	TRACE()
 	data *= factor;
 }
 

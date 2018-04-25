@@ -1,0 +1,7 @@
+<library path="lib/libdepth_tracker_nodelet">
+  <class name="dvo_tracking/depth_tracker" type="dvo_tracking::DepthTrackerNodelet" base_class_type="nodelet::Nodelet">
+    <description>
+      DepthTrackerNodelet
+    </description>
+  </class>
+</library>

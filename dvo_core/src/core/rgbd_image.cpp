@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <functional>
 #include <valgrind/memcheck.h>
+#include <dvo/core/assert.h>
 //#include "../util.h"
 //#include "../stopwatch.h"
 #line __LINE__ "rgbd_image.cpp"
@@ -57,12 +58,9 @@ template<typename T>
 static void pyrDownMeanSmoothIgnoreInvalid(const cv::Mat& in, cv::Mat& out)
 {
 	TRACE()
-  	// std::cout << "\tin (" << in.size().width << ", " << in.size().height << ")\n";
 	out.create(cv::Size(in.size().width / 2, in.size().height / 2), in.type());
 	for(int y = 0; y < out.rows; ++y)
 	{
-		// VALGRIND_CHECK_VALUE_IS_DEFINED(out);
-		// VALGRIND_CHECK_VALUE_IS_DEFINED(y);
 		for(int x = 0; x < out.cols; ++x)
 		{
 			int x0 = x * 2;
@@ -169,16 +167,10 @@ void RgbdImagePyramid::build(const size_t num_levels)
 		levels_.push_back(camera_.level(idx).create());
 		pyrDownMeanSmooth<IntensityType>(levels_[idx - 1]->intensity, levels_[idx]->intensity);
 		pyrDownSubsample<DepthType>(levels_[idx - 1]->depth, levels_[idx]->depth);
-  		// std::cout << "\tReturn image << (" << levels_[idx]->intensity.size().width << ", " << levels_[idx]->intensity.size().height << ", " << levels_[idx]->intensity.type() << ")\n";
-  		// std::cout << "\tReturn depth << (" << levels_[idx]->depth.size().width << ", " << levels_[idx]->depth.size().height << ", " << levels_[idx]->depth.type() << ")\n";
 
 		// pyrDownMeanSmoothIgnoreInvalid<float>(levels_[idx - 1]->depth, levels_[idx]->depth);
 		levels_[idx]->initialize();
-		TRACE()
-	  	// std::cout << "\tImage pyramid level: " << idx << "/" << num_levels << " initialized.\n";
 	}
-	TRACE()
-	// std::cout << "\tAll image pyramid levels initialized\n";
 }
 
 RgbdImage& RgbdImagePyramid::level(size_t idx)
@@ -202,7 +194,6 @@ RgbdCamera::RgbdCamera(size_t width, size_t height, const IntrinsicMatrix& intri
 	TRACE()
 	pointcloud_template_.resize(Eigen::NoChange, width_ * height_);
 	int idx = 0;
-
 	for(size_t y = 0; y < height_; ++y)
 	{
 		for(size_t x = 0; x < width_; ++x, ++idx)
@@ -260,7 +251,6 @@ bool RgbdCamera::hasSameSize(const cv::Mat& img) const
 {
 	TRACE()
 	bool check = (img.cols == width_ && img.rows == height_);
-  	// std::cout << "\t"<< check << "\n";
 	return img.cols == width_ && img.rows == height_;
 }
 
@@ -268,12 +258,9 @@ void RgbdCamera::buildPointCloud(const cv::Mat &depth, PointCloud& pointcloud) c
 {
 	TRACE()
 	ASSERT(hasSameSize(depth));
-
 	pointcloud.resize(Eigen::NoChange, width_ * height_);
-
 	const float* depth_ptr = depth.ptr<float>();
 	int idx = 0;
-
 	for(size_t y = 0; y < height_; ++y)
 	{
 		for(size_t x = 0; x < width_; ++x, ++depth_ptr, ++idx)
@@ -308,7 +295,7 @@ RgbdImagePyramidPtr RgbdCameraPyramid::create(const cv::Mat& base_intensity, con
 {
 	TRACE()
 	camera_count_++;
-	std::cout << "\tNumber of cameras: " << camera_count_ << "\n";
+	std::cout << "\nNumber of cameras: " << camera_count_ << "\n";
 	return RgbdImagePyramidPtr(new RgbdImagePyramid(*this, base_intensity, base_depth));
 }
 
@@ -329,7 +316,6 @@ void RgbdCameraPyramid::build(size_t levels)
 const RgbdCamera& RgbdCameraPyramid::level(size_t level)
 {
 	TRACE()
-  	// std::cout << "\tBuilding camera level: " << level << "\n";
 	build(level + 1);
 	return *levels_[level];
 }
@@ -737,7 +723,7 @@ void RgbdImage::warpIntensityForward(const AffineTransform& transformationx, con
 		}
 	}
 
-	//std::cerr << "warp out: " << outliers << " total: " << total << std::endl;
+	std::cerr << "\twarp out: " << outliers << " total: " << total << std::endl;
 
 	if(identity)
 	{
@@ -745,7 +731,7 @@ void RgbdImage::warpIntensityForward(const AffineTransform& transformationx, con
 	}
 	else
 	{
-		//std::cerr << "did warp" << std::endl;
+		std::cerr << "\tdid warp" << std::endl;
 	}
 	result.intensity = warped_image;
 	result.depth = depth;
@@ -814,7 +800,7 @@ void RgbdImage::warpDepthForwardAdvanced(const AffineTransform& transformation, 
 
 bool RgbdImage::inImage(const float& x, const float& y) const
 {
-	// TRACE()
+	TRACE()
 	return x >= 0 && x < width && y >= 0 && y < height;
 }
 

@@ -53,6 +53,7 @@ OptimizedSelfAdjointMatrix6x6f::OptimizedSelfAdjointMatrix6x6f()
 void OptimizedSelfAdjointMatrix6x6f::setZero()
 {
 	TRACE()
+	// std::cout << "\tJacobian rank update loop...\n";
 	for(size_t idx = 0; idx < Size; idx++)
 		data[idx] = 0.0f;
 }

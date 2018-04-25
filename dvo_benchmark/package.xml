@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>dvo_benchmark</name>
+  <version>0.1.0</version>
+  <description>The dvo_benchmark package</description>
+  <maintainer email="llorrain@ualberta.ca">Laura Petrich</maintainer>
+  <license>GPL</license>
+  <url>http://ros.org/wiki/dvo_benchmark</url>
+  <author>Christian Kerl</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>cmake_modules</depend>
+  <depend>roscpp</depend>
+  <depend>pcl_ros</depend>
+  <depend>dvo_core</depend>
+  <depend>dvo_ros</depend>
+
+  <export>
+
+  </export>
+</package>

@@ -58,7 +58,6 @@ public:
 		user_override_(false)
 	{
   		TRACE()
-  		TRACE_MARKER()
 		name_ = name;
 		createInteractiveCameraMarker(marker_);
 		marker_callback_ = boost::bind(&RosCameraVisualizer::onMarkerFeedback, this, _1);
@@ -67,7 +66,6 @@ public:
 	virtual ~RosCameraVisualizer()
 	{
   		TRACE()
-  		TRACE_MARKER()
 		marker_server_.erase(name());
 		point_cloud_aggregator_.remove(name());
 	};
@@ -75,7 +73,6 @@ public:
 	virtual void show(Option option = ShowCameraAndCloud)
 	{
   		TRACE()
-  		TRACE_MARKER()
 		if(!user_override_)
 		{
 			visibility_ = option;
@@ -87,13 +84,11 @@ public:
 	virtual void hide()
 	{
   		TRACE()
-	  	TRACE_MARKER()
 		show(ShowNothing);
 	}
 
 	virtual CameraVisualizer& onclick(const OnClickCallback& callback)
 	{
-  		TRACE_MARKER()
   		TRACE()
 		onclick_callback_ = callback;
 		return *this;
@@ -102,20 +97,19 @@ public:
 	virtual CameraVisualizer& update(const dvo::core::RgbdImage& img, const Eigen::Affine3d& pose)
 	{
   		TRACE()
-  		TRACE_MARKER()
 		// update marker
 		tf::poseEigenToMsg(pose, marker_.pose);
 
 		visualization_msgs::InteractiveMarker tmp;
 		if(!marker_server_.get(name_, tmp) || hasColorChanged(tmp))
 		{
-			std::cout << "updating marker...\n";
+			// std::cout << "updating marker...\n";
 			updateMarkerColor(marker_);
 			marker_server_.insert(marker_, marker_callback_);
 		}
 		else
 		{
-			std::cout << "setting marker pose...\n";
+			// std::cout << "setting marker pose...\n";
 			marker_server_.setPose(name_, marker_.pose);
 		}
 		//originally commented out
@@ -139,7 +133,6 @@ private:
 
 	void onMarkerFeedback(const visualization_msgs::InteractiveMarkerFeedback::ConstPtr& feedback)
 	{
-  		TRACE_MARKER()
   		TRACE()
    		std::cout << feedback->marker_name << " is now at " << feedback->pose.position.x << ", " << feedback->pose.position.y << ", " << feedback->pose.position.z << "\n";
 		if(feedback->event_type == visualization_msgs::InteractiveMarkerFeedback::BUTTON_CLICK)
@@ -176,7 +169,6 @@ private:
 
 	void updateVisualization()
 	{
-  	  	TRACE_MARKER()
 		TRACE()
 		switch(visibility_)
 		{
@@ -196,7 +188,6 @@ private:
 
 	bool hasColorChanged(const visualization_msgs::InteractiveMarker& m)
 	{
-  		TRACE_MARKER()
   		TRACE()
 		return
 		std::abs(m.controls[0].markers[0].color.r - color().r) > 1e-3 ||
@@ -206,7 +197,6 @@ private:
 
 	void createInteractiveCameraMarker(visualization_msgs::InteractiveMarker& marker)
 	{
-  		TRACE_MARKER()
   		TRACE()
 		visualization_msgs::InteractiveMarkerControl control;
 		control.always_visible = true;
@@ -221,7 +211,6 @@ private:
 
 	void createCameraMarker(visualization_msgs::InteractiveMarkerControl& parent)
 	{
-  		TRACE_MARKER()
   		TRACE()
 		visualization_msgs::Marker m, mbox;
 		m.type = visualization_msgs::Marker::LINE_LIST;
@@ -378,14 +367,12 @@ public:
 	RosTrajectoryVisualizer(std::string& name, interactive_markers::InteractiveMarkerServer& marker_server) :
 		marker_server_(marker_server)
 	{
-  		TRACE_MARKER()
   		TRACE()
 		createTrajectoryMarker(name, marker_);
 	}
 
 	virtual ~RosTrajectoryVisualizer()
 	{
-  		TRACE_MARKER()
   		TRACE()
 
 		marker_server_.erase(marker_.name);
@@ -393,7 +380,6 @@ public:
 
 	virtual TrajectoryVisualizer& add(const Eigen::Affine3d& pose)
 	{
-  		TRACE_MARKER()
   		TRACE()
 		updateMarkerColor();
 
@@ -415,7 +401,6 @@ private:
 
 	void createTrajectoryMarker(std::string& name, visualization_msgs::InteractiveMarker& marker)
 	{
-  		TRACE_MARKER()
   		TRACE()
 		visualization_msgs::Marker m;
 		m.type = visualization_msgs::Marker::LINE_STRIP;
@@ -433,7 +418,6 @@ private:
 
 	void updateMarkerColor()
 	{
-  		TRACE_MARKER()
   		TRACE()
   		std::cout << "Trajectory Visualizer :: updating marker color...\n";
 		marker_.controls[0].markers[0].color.r = float(color().r);
@@ -452,7 +436,6 @@ struct RosCameraTrajectoryVisualizerImpl
 		it_(nh),
 		marker_server_(nh.getNamespace())
 	{
-  		TRACE_MARKER()
   		TRACE()
 		image_topic_ = it_.advertise("image", 1, true);
 		point_cloud_topic_ = nh_.advertise<AsyncPointCloudBuilder::PointCloud>("cloud", 1, true);
@@ -461,13 +444,11 @@ struct RosCameraTrajectoryVisualizerImpl
 
 	~RosCameraTrajectoryVisualizerImpl()
 	{
-  		TRACE_MARKER()
   		TRACE()
 	}
 
 	CameraVisualizer::Ptr camera(std::string name)
 	{
-   		TRACE_MARKER()
  		TRACE()
 		CameraVisualizerMap::iterator camera = camera_visualizers_.find(name);
 		if(camera_visualizers_.end() == camera)
@@ -481,7 +462,6 @@ struct RosCameraTrajectoryVisualizerImpl
 
 	TrajectoryVisualizer::Ptr trajectory(std::string name)
 	{
-  		TRACE_MARKER()
   		TRACE()
 		TrajectoryVisualizerMap::iterator trajectory = trajectory_visualizers_.find(name);
 		if(trajectory_visualizers_.end() == trajectory)
@@ -496,7 +476,6 @@ struct RosCameraTrajectoryVisualizerImpl
 
 	void reset()
 	{
-  		TRACE_MARKER()
   		TRACE()
 		camera_visualizers_.clear();
 		trajectory_visualizers_.clear();
@@ -505,7 +484,6 @@ struct RosCameraTrajectoryVisualizerImpl
 
 	interactive_markers::InteractiveMarkerServer* native()
 	{
-  		TRACE_MARKER()
   		TRACE()
 		return &marker_server_;
 	}
@@ -523,12 +501,9 @@ private:
 	void update(const ros::TimerEvent& e)
 	{
  		// TRACE()
-		VALGRIND_CHECK_VALUE_IS_DEFINED(e);
-		VALGRIND_CHECK_VALUE_IS_DEFINED(point_cloud_topic_);
 		if(point_cloud_topic_.getNumSubscribers() == 0) return;
-		VALGRIND_CHECK_VALUE_IS_DEFINED(point_cloud_aggregator_);
 		dvo::visualization::AsyncPointCloudBuilder::PointCloud::Ptr cloud = point_cloud_aggregator_.build();
-		VALGRIND_CHECK_VALUE_IS_DEFINED(cloud);
+		// VALGRIND_CHECK_VALUE_IS_DEFINED(cloud);
 		cloud->header.frame_id = "/world";
 		cloud->is_dense = true;
 		point_cloud_topic_.publish(cloud);
@@ -540,41 +515,35 @@ private:
 RosCameraTrajectoryVisualizer::RosCameraTrajectoryVisualizer(ros::NodeHandle& nh) :
 		impl_(new internal::RosCameraTrajectoryVisualizerImpl(nh))
 {
-  	TRACE_MARKER()
 	TRACE()
 }
 
 RosCameraTrajectoryVisualizer::~RosCameraTrajectoryVisualizer()
 {
-  	TRACE_MARKER()
 	TRACE()
 	delete impl_;
 }
 
 dvo::visualization::CameraVisualizer::Ptr RosCameraTrajectoryVisualizer::camera(std::string name)
 {
-  	TRACE_MARKER()
 	TRACE()
 	return impl_->camera(name);
 }
 
 dvo::visualization::TrajectoryVisualizer::Ptr RosCameraTrajectoryVisualizer::trajectory(std::string name)
 {
-  	TRACE_MARKER()
 	TRACE()
 	return impl_->trajectory(name);
 }
 
 void RosCameraTrajectoryVisualizer::reset()
 {
-  	TRACE_MARKER()
 	TRACE()
 	impl_->reset();
 }
 
 bool RosCameraTrajectoryVisualizer::native(void*& native_visualizer)
 {
-  	TRACE_MARKER()
 	TRACE()
 	native_visualizer = impl_->native();
 	return true;

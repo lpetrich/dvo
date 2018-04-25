@@ -64,6 +64,7 @@ add_library(dvo_visualization
 	src/visualization/async_point_cloud_builder.cpp
 	src/visualization/point_cloud_aggregator.cpp
 	src/visualization/pcl_camera_trajetory_visualizer.cpp
+	src/visualization/object_trajectory_visualizer.cpp
 )
 
 target_link_libraries(dvo_visualization

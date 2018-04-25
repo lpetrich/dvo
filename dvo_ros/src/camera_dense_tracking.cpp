@@ -67,7 +67,7 @@ CameraDenseTracker::CameraDenseTracker(ros::NodeHandle& nh, ros::NodeHandle& nh_
 	// usleep(2000);
 	dvo_ros::util::tryGetTransform(from_baselink_to_kinect, tl, "/camera_link", "/camera_rgb_optical_frame");
 
-	std::cout << "\nTRANSFORM: camera_link -> camera_rgb_optical_frame\n" << from_baselink_to_kinect.matrix() << "\n\n";
+	// std::cout << "\nTRANSFORM: camera_link -> camera_rgb_optical_frame\n" << from_baselink_to_kinect.matrix() << "\n\n";
 
 	pose_sub_ = nh.subscribe<geometry_msgs::PoseWithCovarianceStamped>("pelican/pose", 1, &CameraDenseTracker::handlePose, this);
 
@@ -125,10 +125,10 @@ void CameraDenseTracker::handleConfig(dvo_ros::CameraDenseTrackerConfig& config,
 	}
   	config.run_dense_tracking = 1;
   	config.use_dense_tracking_estimate = 1;
-  	std::cout << "Levels: " << level << "\n";
-  	std::cout << "Run dense tracking: " << config.run_dense_tracking << "\n";
-  	std::cout << "Use dense tracking estimate: " << config.use_dense_tracking_estimate << "\n";
-  	std::cout << "Tracker: " << tracker << "\n";
+  	// std::cout << "Levels: " << level << "\n";
+  	// std::cout << "Run dense tracking: " << config.run_dense_tracking << "\n";
+  	// std::cout << "Use dense tracking estimate: " << config.use_dense_tracking_estimate << "\n";
+  	// std::cout << "Tracker: " << tracker << "\n";
   	
 	if(level & CameraDenseTracker_RunDenseTracking)
 	{
@@ -179,6 +179,7 @@ void CameraDenseTracker::handleConfig(dvo_ros::CameraDenseTrackerConfig& config,
 	{
 		vis_->reset();
 		delete vis_;
+		// vis_ = new dvo::visualization::NoopCameraTrajectoryVisualizer();
 
 		if(config.reconstruction)
 		{

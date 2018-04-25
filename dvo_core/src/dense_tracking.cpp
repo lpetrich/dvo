@@ -26,6 +26,7 @@
 #include <sophus/se3.hpp>
 
 #include <Eigen/Core>
+#include <dvo/core/assert.h>
 
 #include <dvo/core/datatypes.h>
 #include <dvo/core/point_selection_predicates.h>
@@ -78,9 +79,7 @@ void DenseTracker::configure(const Config& config)
 {
 	TRACE()
 	ASSERT(config.IsSane());
-
 	cfg = config;
-
 	selection_predicate_.intensity_threshold = cfg.IntensityDerivativeThreshold;
 	selection_predicate_.depth_threshold = cfg.DepthDerivativeThreshold;
 
@@ -141,9 +140,7 @@ bool DenseTracker::match(dvo::core::PointSelection& reference, dvo::core::RgbdIm
 	TRACE()
 	current.compute(cfg.getNumLevels());
 	bool success = true;
-
 	cfg.UseInitialEstimate = false;
-	
 	if(cfg.UseInitialEstimate)
 	{
 		// VALGRIND_CHECK_VALUE_IS_DEFINED(result);	
@@ -155,187 +152,129 @@ bool DenseTracker::match(dvo::core::PointSelection& reference, dvo::core::RgbdIm
 	}
 	// our first increment is the given guess
 	Sophus::SE3d inc(result.Transformation.rotation(), result.Transformation.translation());
-
 	Revertable<Sophus::SE3d> initial(inc);
 	Revertable<Sophus::SE3d> estimate;
-
 	bool accept = true;
-
 	//static stopwatch_collection sw_level(5, "l", 100);
 	//static stopwatch_collection sw_it(5, "it@l", 500);
 	//static stopwatch_collection sw_error(5, "err@l", 500);
 	//static stopwatch_collection sw_linsys(5, "linsys@l", 500);
 	//static stopwatch_collection sw_prep(5, "prep@l", 100);
-
 	if(points_error.size() < reference.getMaximumNumberOfPoints(cfg.LastLevel))
 		points_error.resize(reference.getMaximumNumberOfPoints(cfg.LastLevel));
 	if(residuals.size() < reference.getMaximumNumberOfPoints(cfg.LastLevel))
 		residuals.resize(reference.getMaximumNumberOfPoints(cfg.LastLevel));
 	if(weights.size() < reference.getMaximumNumberOfPoints(cfg.LastLevel))
 		weights.resize(reference.getMaximumNumberOfPoints(cfg.LastLevel));
-
 	std::vector<uint8_t> valid_residuals;
-
 	bool debug = false;
 	if(debug)
 	{
 		reference.debug(true);
 		valid_residuals.resize(reference.getMaximumNumberOfPoints(cfg.LastLevel));
 	}
-	/*
-	std::stringstream name;
-	name << std::setiosflags(std::ios::fixed) << std::setprecision(2) << current.timestamp() << "_error.avi";
-
-	cv::Size s = reference.getRgbdImagePyramid().level(size_t(cfg.LastLevel)).intensity.size();
-	cv::Mat video_frame(s.height, s.width * 2, CV_32FC1), video_frame_u8;
-	cv::VideoWriter vw(name.str(), CV_FOURCC('P','I','M','1'), 30, video_frame.size(), false);
-	float rgb_max = 0.0;
-	float depth_max = 0.0;
-
-	std::stringstream name1;
-	name1 << std::setiosflags(std::ios::fixed) << std::setprecision(2) << current.timestamp() << "_ref.png";
-
-	cv::imwrite(name1.str(), current.level(0).rgb);
-
-	std::stringstream name2;
-	name2 << std::setiosflags(std::ios::fixed) << std::setprecision(2) << current.timestamp() << "_cur.png";
-
-	cv::imwrite(name2.str(), reference.getRgbdImagePyramid().level(0).rgb);
-	*/
+	// cv::imshow("previous frame", current.level(0).intensity);
+	// cv::imshow("current frame", reference.getRgbdImagePyramid().level(0).intensity);
+	// cv::waitKey(1);
 	Eigen::Vector2f mean;
 	mean.setZero();
 	Eigen::Matrix2f /*first_precision,*/ precision;
 	precision.setZero();
-
 	for(itctx_.Level = cfg.FirstLevel; itctx_.Level >= cfg.LastLevel; --itctx_.Level)
 	{
 		result.Statistics.Levels.push_back(LevelStats());
 		LevelStats& level_stats = result.Statistics.Levels.back();
-
 		mean.setZero();
 		precision.setZero();
-
 		// reset error after every pyramid level? yes because errors from different levels are not comparable
 		itctx_.Iteration = 0;
 		itctx_.Error = std::numeric_limits<double>::max();
-
 		RgbdImage& cur = current.level(itctx_.Level);
 		const IntrinsicMatrix& K = cur.camera().intrinsics();
-
 		Vector8f wcur, wref;
 		// i z idx idy zdx zdy
 		float wcur_id = 0.5f, wref_id = 0.5f, wcur_zd = 1.0f, wref_zd = 0.0f;
-
 		wcur <<  1.0f / 255.0f,  1.0f, wcur_id * K.fx() / 255.0f, wcur_id * K.fy() / 255.0f, wcur_zd * K.fx(), wcur_zd * K.fy(), 0.0f, 0.0f;
 		wref << -1.0f / 255.0f, -1.0f, wref_id * K.fx() / 255.0f, wref_id * K.fy() / 255.0f, wref_zd * K.fx(), wref_zd * K.fy(), 0.0f, 0.0f;
-
 //    sw_prep[itctx_.Level].start();
-
-
 		PointSelection::PointIterator first_point, last_point;
 		reference.select(itctx_.Level, first_point, last_point);
 		cur.buildAccelerationStructure();
-
 		level_stats.Id = itctx_.Level;
 		level_stats.MaxValidPixels = reference.getMaximumNumberOfPoints(itctx_.Level);
 		level_stats.ValidPixels = last_point - first_point;
-
 //    sw_prep[itctx_.Level].stopAndPrint();
-
 		NormalEquationsLeastSquares ls;
 		Matrix6d A;
 		Vector6d x, b;
 		x = inc.log();
-
 		ComputeResidualsResult compute_residuals_result;
 		compute_residuals_result.first_point_error = points_error.begin();
 		compute_residuals_result.first_residual = residuals.begin();
 		compute_residuals_result.first_valid_flag = valid_residuals.begin();
-
-
 //    sw_level[itctx_.Level].start();
 		do
 		{
 			level_stats.Iterations.push_back(IterationStats());
 			IterationStats& iteration_stats = level_stats.Iterations.back();
 			iteration_stats.Id = itctx_.Iteration;
-
 //      sw_it[itctx_.Level].start();
-
 			double total_error = 0.0f;
 //      sw_error[itctx_.Level].start();
 			Eigen::Affine3f transformf;
-
-				inc = Sophus::SE3d::exp(x);
-				initial.update() = inc.inverse() * initial();
-				estimate.update() = inc * estimate();
-
-				transformf = estimate().matrix().cast<float>();
-
-				if(debug)
-				{
-					dvo::core::computeResidualsAndValidFlagsSse(first_point, last_point, cur, K, transformf, wref, wcur, compute_residuals_result);
-				}
-				else
-				{
-					dvo::core::computeResidualsSse(first_point, last_point, cur, K, transformf, wref, wcur, compute_residuals_result);
-				}
-				size_t n = (compute_residuals_result.last_residual - compute_residuals_result.first_residual);
-				iteration_stats.ValidConstraints = n;
-
-				if(n < 6)
-				{
-					initial.revert();
-					estimate.revert();
-
-					level_stats.TerminationCriterion = TerminationCriteria::TooFewConstraints;
-
-					break;
-				}
-
-				if(itctx_.IsFirstIterationOnLevel())
-				{
-					std::fill(weights.begin(), weights.begin() + n, 1.0f);
-				}
-				else
-				{
-					dvo::core::computeWeightsSse(compute_residuals_result.first_residual, compute_residuals_result.last_residual, weights.begin(), mean, precision);
-				}
-
-				precision = dvo::core::computeScaleSse(compute_residuals_result.first_residual, compute_residuals_result.last_residual, weights.begin(), mean).inverse();
-
-				float ll = computeCompleteDataLogLikelihood(compute_residuals_result.first_residual, compute_residuals_result.last_residual, weights.begin(), mean, precision);
-
-				iteration_stats.TDistributionLogLikelihood = -ll;
-				iteration_stats.TDistributionMean = mean.cast<double>();
-				iteration_stats.TDistributionPrecision = precision.cast<double>();
-				iteration_stats.PriorLogLikelihood = cfg.Mu * initial().log().squaredNorm();
-
-				total_error = -ll;//iteration_stats.TDistributionLogLikelihood + iteration_stats.PriorLogLikelihood;
-
-				itctx_.LastError = itctx_.Error;
-				itctx_.Error = total_error;
-
+			inc = Sophus::SE3d::exp(x);
+			initial.update() = inc.inverse() * initial();
+			estimate.update() = inc * estimate();
+			transformf = estimate().matrix().cast<float>();
+			if(debug)
+			{
+				dvo::core::computeResidualsAndValidFlagsSse(first_point, last_point, cur, K, transformf, wref, wcur, compute_residuals_result);
+			}
+			else
+			{
+				dvo::core::computeResidualsSse(first_point, last_point, cur, K, transformf, wref, wcur, compute_residuals_result);
+			}
+			size_t n = (compute_residuals_result.last_residual - compute_residuals_result.first_residual);
+			iteration_stats.ValidConstraints = n;
+			if(n < 6)
+			{
+				initial.revert();
+				estimate.revert();
+				level_stats.TerminationCriterion = TerminationCriteria::TooFewConstraints;
+				// std::cout << "\tTermination Criteria: Too Few Constraints\n";
+				break;
+			}
+			if(itctx_.IsFirstIterationOnLevel())
+			{
+				std::fill(weights.begin(), weights.begin() + n, 1.0f);
+			}
+			else
+			{
+				dvo::core::computeWeightsSse(compute_residuals_result.first_residual, compute_residuals_result.last_residual, weights.begin(), mean, precision);
+			}
+			precision = dvo::core::computeScaleSse(compute_residuals_result.first_residual, compute_residuals_result.last_residual, weights.begin(), mean).inverse();
+			float ll = computeCompleteDataLogLikelihood(compute_residuals_result.first_residual, compute_residuals_result.last_residual, weights.begin(), mean, precision);
+			iteration_stats.TDistributionLogLikelihood = -ll;
+			iteration_stats.TDistributionMean = mean.cast<double>();
+			iteration_stats.TDistributionPrecision = precision.cast<double>();
+			iteration_stats.PriorLogLikelihood = cfg.Mu * initial().log().squaredNorm();
+			total_error = -ll;//iteration_stats.TDistributionLogLikelihood + iteration_stats.PriorLogLikelihood;
+			itctx_.LastError = itctx_.Error;
+			itctx_.Error = total_error;
 //      sw_error[itctx_.Level].stopAndPrint();
-
 			// accept the last increment?
 			accept = itctx_.Error < itctx_.LastError;
-
 			if(!accept)
 			{
 				initial.revert();
 				estimate.revert();
-
 				level_stats.TerminationCriterion = TerminationCriteria::LogLikelihoodDecreased;
-
+				// std::cout << "\tTermination Criteria: LogLikelihood Decreased\n";
 				break;
 			}
-
 			// now build equation system
 //      sw_linsys[itctx_.Level].start();
-
 			WeightVectorType::iterator w_it = weights.begin();
-
 			Matrix2x6 J, Jw;
 			Eigen::Vector2f Ji;
 			Vector6 Jz;
@@ -344,10 +283,8 @@ bool DenseTracker::match(dvo::core::PointSelection& reference, dvo::core::RgbdIm
 			{
 				computeJacobianOfProjectionAndTransformation(e_it->getPointVec4f(), Jw);
 				compute3rdRowOfJacobianOfTransformation(e_it->getPointVec4f(), Jz);
-
 				J.row(0) = e_it->getIntensityDerivativeVec2f().transpose() * Jw;
 				J.row(1) = e_it->getDepthDerivativeVec2f().transpose() * Jw - Jz.transpose();
-
 				ls.update(J, e_it->getIntensityAndDepthVec2f(), (*w_it) * precision);
 			}
 			ls.finish();
@@ -355,33 +292,32 @@ bool DenseTracker::match(dvo::core::PointSelection& reference, dvo::core::RgbdIm
 			A = ls.A.cast<double>() + cfg.Mu * Matrix6d::Identity();
 			b = ls.b.cast<double>() + cfg.Mu * initial().log();
 			x = A.ldlt().solve(b);
-
 //      sw_linsys[itctx_.Level].stopAndPrint();
-
 			iteration_stats.EstimateIncrement = x;
 			iteration_stats.EstimateInformation = A;
-
 			itctx_.Iteration++;
 //      sw_it[itctx_.Level].stopAndPrint();
-		}
-		while(accept && x.lpNorm<Eigen::Infinity>() > cfg.Precision && !itctx_.IterationsExceeded());
+		} while(accept && x.lpNorm<Eigen::Infinity>() > cfg.Precision && !itctx_.IterationsExceeded());
 
 		if(x.lpNorm<Eigen::Infinity>() <= cfg.Precision)
+		{
 			level_stats.TerminationCriterion = TerminationCriteria::IncrementTooSmall;
+			// std::cout << "\tTermination Criteria: Increment Too Small\n";
+		}
 
 		if(itctx_.IterationsExceeded())
+		{
 			level_stats.TerminationCriterion = TerminationCriteria::IterationsExceeded;
-
+			// std::cout << "\tTermination Criteria: Iterations Exceeded\n";
+		}
 //    sw_level[itctx_.Level].stopAndPrint();
 	}
-
 	LevelStats& last_level = result.Statistics.Levels.back();
 	IterationStats& last_iteration = last_level.TerminationCriterion != TerminationCriteria::LogLikelihoodDecreased ? last_level.Iterations[last_level.Iterations.size() - 1] : last_level.Iterations[last_level.Iterations.size() - 2];
-
 	result.Transformation = estimate().inverse().matrix();
+	// std::cout << "\nMatch Transformation: \n" << result.Transformation.matrix() << "\n";
 	result.Information = last_iteration.EstimateInformation * 0.008 * 0.008;
 	result.LogLikelihood = last_iteration.TDistributionLogLikelihood + last_iteration.PriorLogLikelihood;
-
 	return success;
 }
 

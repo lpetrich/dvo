@@ -368,6 +368,7 @@ private:
 
 	static void onSwitchKeyPressed(const pcl::visualization::KeyboardEvent& e, void* data)
 	{
+		TRACE()
 		SwitchKeyBinding* binding = (SwitchKeyBinding*) data;
 		if(e.keyDown() && e.getKeySym() == binding->key)
 		{

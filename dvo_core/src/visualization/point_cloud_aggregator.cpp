@@ -38,8 +38,14 @@ namespace internal
 class PointCloudAggregatorImpl
 {
 public:
-	PointCloudAggregatorImpl() {}
-	~PointCloudAggregatorImpl() {}
+	PointCloudAggregatorImpl() 
+	{
+		TRACE()
+	}
+	~PointCloudAggregatorImpl() 
+	{
+		TRACE()
+	}
 
 	PointCloudMap clouds_;
 	boost::mutex clouds_mutex_;
@@ -52,9 +58,15 @@ dvo::visualization::AsyncPointCloudBuilder::PointCloud::Ptr passthroughPointClou
 	return cloud;
 }
 
-PointCloudAggregator::PointCloudAggregator() : impl_(new internal::PointCloudAggregatorImpl()) {}
+PointCloudAggregator::PointCloudAggregator() : impl_(new internal::PointCloudAggregatorImpl()) 
+{
+	TRACE()
+}
 
-PointCloudAggregator::~PointCloudAggregator() {}
+PointCloudAggregator::~PointCloudAggregator() 
+{
+	TRACE()
+}
 
 void PointCloudAggregator::add(const std::string& name, const dvo::visualization::AsyncPointCloudBuilder::PointCloud::Ptr& cloud)
 {
@@ -79,6 +91,7 @@ void PointCloudAggregator::remove(const std::string& name)
 
 AsyncPointCloudBuilder::PointCloud::Ptr PointCloudAggregator::build()
 {
+	TRACE()
 	AsyncPointCloudBuilder::PointCloud::Ptr highres_cloud(new AsyncPointCloudBuilder::PointCloud);
 	AsyncPointCloudBuilder::PointCloud::Ptr downsampled_cloud(new AsyncPointCloudBuilder::PointCloud);
 	{
