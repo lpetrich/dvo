@@ -27,14 +27,16 @@ namespace dvo_tracking
 CameraBase::CameraBase(ros::NodeHandle& nh, ros::NodeHandle& nh_private) :
 	nh_(nh),
 	nh_private_(nh_private),
-
 	rgb_image_subscriber_(nh, "/camera/rgb/image_rect_color", 30),
 	depth_image_subscriber_(nh, "/camera/depth/image_rect", 30),
 	rgb_camera_info_subscriber_(nh, "/camera/rgb/camera_info", 30),
 	depth_camera_info_subscriber_(nh, "/camera/depth/camera_info", 30),
 
+	// rgb_image_subscriber_(nh, "/roi/rgb/image_rect_color", 30),
+	// depth_image_subscriber_(nh, "/roi/depth/image_rect", 30),
+	// rgb_camera_info_subscriber_(nh, "/roi/rgb/camera_info", 30),
+	// depth_camera_info_subscriber_(nh, "/roi/depth/camera_info", 30),	
 	synchronizer_(RGBDWithCameraInfoPolicy(5), rgb_image_subscriber_, depth_image_subscriber_, rgb_camera_info_subscriber_, depth_camera_info_subscriber_),
-
 	connected(false)
 {
 	TRACE()
@@ -55,9 +57,10 @@ bool CameraBase::isSynchronizedImageStreamRunning()
 void CameraBase::startSynchronizedImageStream()
 {
   	TRACE()
+	std::cout << "connected: "<< connected << "\n";
 	if(!connected)
 	{
-		// std::cout << "synchronizing image streams...\n";
+		std::cout << "synchronizing image streams...\n";
 		connection = synchronizer_.registerCallback(boost::bind(&CameraBase::handleImages, this, _1, _2, _3, _4));
 		connected = true;
 	}
@@ -68,7 +71,7 @@ void CameraBase::stopSynchronizedImageStream()
   	TRACE()
 	if(connected)
 	{
-		// std::cout << "disconnecting image streams...\n";
+		std::cout << "disconnecting image streams...\n";
 		connection.disconnect();
 		connected = false;
 	}

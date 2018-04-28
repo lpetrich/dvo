@@ -271,6 +271,7 @@ float NormalDistributionScaleEstimator::compute(const cv::Mat& errors) const
 const char* ScaleEstimators::str(enum_t type)
 {
 	TRACE()
+	std::cout << "type: "<< type << "\n";
 	switch(type)
 	{
 		case ScaleEstimators::Unit:
@@ -405,6 +406,7 @@ void HuberInfluenceFunction::configure(const float& param)
 const char* InfluenceFunctions::str(enum_t type)
 {
 	TRACE()
+	std::cout << "type: "<< type << "\n";
 	switch(type)
 	{
 		case InfluenceFunctions::Unit:

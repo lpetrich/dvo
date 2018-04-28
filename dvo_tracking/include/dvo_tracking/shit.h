@@ -24,7 +24,7 @@
 
 #include <ros/ros.h>
 #include <ros/console.h>
-#include <dynamic_reconfigure/server.h>
+// #include <dynamic_reconfigure/server.h>
 #include <std_msgs/UInt32.h>
 #include <sensor_msgs/Image.h>
 #include <sensor_msgs/CameraInfo.h>
@@ -51,7 +51,6 @@
 #include <dvo/core/datatypes.h>
 #include <dvo/core/intrinsic_matrix.h>
 #include <dvo/core/rgbd_image.h>
-#include <dvo/core/point_selection.h>
 #include <dvo/core/least_squares.h>
 #include <dvo/core/weight_calculation.h>
 #include <dvo/core/macros.h>
@@ -60,49 +59,46 @@
 #include <dvo_tracking/camera_base.h>
 #include <dvo_tracking/CameraDenseTrackerConfig.h>
 #include <dvo_tracking/util/util.h>
-#include <dvo_tracking/util/configtools.h>
-#include <dvo_tracking/visualization/ros_camera_trajectory_visualizer.h>
+// #include <dvo_tracking/util/configtools.h>
+// #include <dvo_tracking/visualization/ros_camera_trajectory_visualizer.h>
 
 namespace dvo_tracking
 {
 
-class DepthNode : public CameraBase
+class ObjectTracker : public CameraBase
 {
 private:
-	typedef dynamic_reconfigure::Server<dvo_tracking::CameraDenseTrackerConfig> ReconfigureServer;
+	// typedef dynamic_reconfigure::Server<dvo_tracking::CameraDenseTrackerConfig> ReconfigureServer;
 	uint32_t width;
 	uint32_t height;
-	uint32_t roi_height;
-	uint32_t roi_width;
-	cv::Point2f roi_centroid;
+	double u;
+	double v;
 	cv::Mat current_view;
 	boost::shared_ptr<dvo::DenseTracker> tracker;
 	dvo::DenseTracker::Config tracker_cfg;
-	dvo::core::RgbdCameraPyramidPtr camera;
-	dvo::core::RgbdImagePyramidPtr current, reference;
+	// dvo::core::RgbdCameraPyramidPtr camera;
+	// dvo::core::RgbdImagePyramidPtr current, reference;
+  	boost::shared_ptr<dvo::core::RgbdImagePyramid> current, reference;
 
 	Eigen::Affine3d accumulated_transform, from_baselink_to_kinect, latest_absolute_transform_;
 
 	size_t frames_since_last_success;
 
 	tf::TransformListener tl;
-	ros::Publisher pose_pub_;
-	ros::Subscriber size_sub_;
-	ros::Subscriber centroid_sub_;
+	ros::Publisher uv_pub_;
+	ros::Subscriber uv_sub_;
 
-	ReconfigureServer reconfigure_server_;
 	dvo::visualization::CameraTrajectoryVisualizerInterface* vis_;
 	bool use_dense_tracking_estimate_;
 	boost::mutex tracker_mutex_;
 
 	bool hasChanged(const sensor_msgs::CameraInfo::ConstPtr& camera_info_msg);
 	void reset(const sensor_msgs::CameraInfo::ConstPtr& camera_info_msg);
-
-	void publishPose(const std_msgs::Header& header, const Eigen::Affine3d& transform, const std::string frame);
+	void uvPublish(const std_msgs::Header& header, const Eigen::Affine3d& transform, const std::string frame);
 
 public:
-	DepthNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private);
-	virtual ~DepthNode();
+	ObjectTracker(ros::NodeHandle& nh, ros::NodeHandle& nh_private);
+	virtual ~ObjectTracker();
 
 	virtual void handleImages(
 			const sensor_msgs::Image::ConstPtr& rgb_image_msg,
@@ -110,8 +106,7 @@ public:
 			const sensor_msgs::CameraInfo::ConstPtr& rgb_camera_info_msg,
 			const sensor_msgs::CameraInfo::ConstPtr& depth_camera_info_msg
 	);
-	void roiSize(const geometry_msgs::Point::ConstPtr& data);
-	void roiCentroid(const geometry_msgs::Point::ConstPtr& data);
+	void uvCallback(const geometry_msgs::Point::ConstPtr& data);
 	void handleConfig(dvo_tracking::CameraDenseTrackerConfig& config, uint32_t level);
 };
 

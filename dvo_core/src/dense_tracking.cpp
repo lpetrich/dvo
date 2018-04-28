@@ -181,7 +181,7 @@ bool DenseTracker::match(dvo::core::PointSelection& reference, dvo::core::RgbdIm
 	Eigen::Matrix2f /*first_precision,*/ precision;
 	precision.setZero();
 	for(itctx_.Level = cfg.FirstLevel; itctx_.Level >= cfg.LastLevel; --itctx_.Level)
-	{
+	{	
 		result.Statistics.Levels.push_back(LevelStats());
 		LevelStats& level_stats = result.Statistics.Levels.back();
 		mean.setZero();
@@ -213,6 +213,7 @@ bool DenseTracker::match(dvo::core::PointSelection& reference, dvo::core::RgbdIm
 		compute_residuals_result.first_residual = residuals.begin();
 		compute_residuals_result.first_valid_flag = valid_residuals.begin();
 //    sw_level[itctx_.Level].start();
+		// std::cout << "\tLOOP" << "\n";
 		do
 		{
 			level_stats.Iterations.push_back(IterationStats());
@@ -279,6 +280,7 @@ bool DenseTracker::match(dvo::core::PointSelection& reference, dvo::core::RgbdIm
 			Eigen::Vector2f Ji;
 			Vector6 Jz;
 			ls.initialize(1);
+			// std::cout << "\tRANK UPDATE" << "\n";
 			for(PointIterator e_it = compute_residuals_result.first_point_error; e_it != compute_residuals_result.last_point_error; ++e_it, ++w_it)
 			{
 				computeJacobianOfProjectionAndTransformation(e_it->getPointVec4f(), Jw);

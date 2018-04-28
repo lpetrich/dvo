@@ -250,7 +250,10 @@ RgbdImagePtr RgbdCamera::create() const
 bool RgbdCamera::hasSameSize(const cv::Mat& img) const
 {
 	TRACE()
-	bool check = (img.cols == width_ && img.rows == height_);
+	// std::cout << "width: " << width_ << " height: " << height_ << "\n";
+	// std::cout << "image width: " << img.cols << " image height: " << img.rows << "\n";
+
+	// bool check = (img.cols == width_ && img.rows == height_);
 	return img.cols == width_ && img.rows == height_;
 }
 
@@ -295,7 +298,7 @@ RgbdImagePyramidPtr RgbdCameraPyramid::create(const cv::Mat& base_intensity, con
 {
 	TRACE()
 	camera_count_++;
-	std::cout << "\nNumber of cameras: " << camera_count_ << "\n";
+	// std::cout << "\nNumber of cameras: " << camera_count_ << "\n";
 	return RgbdImagePyramidPtr(new RgbdImagePyramid(*this, base_intensity, base_depth));
 }
 
@@ -416,8 +419,10 @@ bool RgbdImage::calculateIntensityDerivatives()
 	if(!intensity_requires_calculation_) return false;
 	ASSERT(hasIntensity());
 	calculateDerivativeX<IntensityType>(intensity, intensity_dx);
-	//calculateDerivativeY<IntensityType>(intensity, intensity_dy);
-	calculateDerivativeYSseFloat(intensity, intensity_dy);
+	calculateDerivativeY<IntensityType>(intensity, intensity_dy);
+	
+	// USE BELOW FOR FULL IMAGE -- ENDS IN SEG FAULT FOR CROPS
+	// calculateDerivativeYSseFloat(intensity, intensity_dy);
 	/*
 	cv::Mat dy_ref, diff;
 	calculateDerivativeY<IntensityType>(intensity, dy_ref);

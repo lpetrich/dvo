@@ -41,6 +41,9 @@ DepthNode::DepthNode(ros::NodeHandle& nh, ros::NodeHandle& nh_private) :
 	reconfigure_server_.setCallback(reconfigure_server_callback);
 	cv::namedWindow("Depth Tracking", cv::WINDOW_AUTOSIZE);
 	pose_pub_ = nh.advertise<geometry_msgs::PoseWithCovarianceStamped>("/object_pose", 1);
+	size_sub_ = nh_.subscribe("/roi_size", 1, &DepthNode::roiSize, this);
+	centroid_sub_ = nh_.subscribe("/roi_centroid", 1, &DepthNode::roiCentroid, this);
+
 	dvo_tracking::util::tryGetTransform(from_baselink_to_kinect, tl, "/camera_link", "/camera_rgb_optical_frame");
 	latest_absolute_transform_.setIdentity();
 	accumulated_transform.setIdentity();
@@ -55,6 +58,7 @@ DepthNode::~DepthNode()
 bool DepthNode::hasChanged(const sensor_msgs::CameraInfo::ConstPtr& camera_info_msg)
 {
   	TRACE()
+	// return width != roi_width || height != roi_height;
 	return width != camera_info_msg->width || height != camera_info_msg->height;
 }
 
@@ -62,14 +66,18 @@ void DepthNode::reset(const sensor_msgs::CameraInfo::ConstPtr& camera_info_msg)
 {
   	TRACE()
 	IntrinsicMatrix intrinsics = IntrinsicMatrix::create(camera_info_msg->P[0], camera_info_msg->P[5], camera_info_msg->P[2], camera_info_msg->P[6]);
-	camera.reset(new dvo::core::RgbdCameraPyramid(camera_info_msg->width, camera_info_msg->height, intrinsics));
+	// width = roi_width;
+	// height = roi_height;
+	// camera.reset(new dvo::core::RgbdCameraPyramid(width, height, intrinsics));
+
+	width = camera_info_msg->width;
+	height = camera_info_msg->height;
+	camera.reset(new dvo::core::RgbdCameraPyramid(width, height, intrinsics));
 	camera->build(tracker_cfg.getNumLevels());
 	tracker.reset(new DenseTracker(tracker_cfg));
 	static RgbdImagePyramid* const __null__ = 0;
 	reference.reset(__null__);
 	current.reset(__null__);
-	width = camera_info_msg->width;
-	height = camera_info_msg->height;
 	vis_->reset();
 }
 
@@ -80,6 +88,7 @@ void DepthNode::handleConfig(dvo_tracking::CameraDenseTrackerConfig& config, uin
 	{
 		return;
 	}
+	config.coarsest_level = 2;
   	config.run_dense_tracking = 1;
   	config.use_dense_tracking_estimate = 1;
 	if(level & CameraDenseTracker_RunDenseTracking)
@@ -115,12 +124,12 @@ void DepthNode::handleConfig(dvo_tracking::CameraDenseTrackerConfig& config, uin
 		}
 		std::cout << "\n\tTRACKER CONFIGURATIONS: " << tracker_cfg << "\n";
 	}
-	if(level & CameraDenseTracker_MiscParam)
-	{
-		vis_->reset();
-		delete vis_;
-		vis_ = new dvo::visualization::NoopCameraTrajectoryVisualizer();
-	}
+	// if(level & CameraDenseTracker_MiscParam)
+	// {
+	// 	vis_->reset();
+	// 	delete vis_;
+	// 	vis_ = new dvo::visualization::NoopCameraTrajectoryVisualizer();
+	// }
 }
 
 void DepthNode::handleImages(
@@ -165,6 +174,12 @@ void DepthNode::handleImages(
 		depth = depth_in;
 	}
 	reference.swap(current);
+
+	// cv::Mat roi_rgb, roi_depth;
+	// getRectSubPix(intensity.clone(), cv::Size(roi_width,roi_height), roi_centroid, roi_rgb, -1);
+	// getRectSubPix(depth.clone(), cv::Size(roi_width,roi_height), roi_centroid, roi_depth, -1);
+	// current = camera->create(roi_rgb, roi_depth);
+
 	current = camera->create(intensity, depth);
 	std_msgs::Header h = rgb_image_msg->header;
 	static Eigen::Affine3d first;
@@ -172,7 +187,7 @@ void DepthNode::handleImages(
 	{
 		accumulated_transform = latest_absolute_transform_ * from_baselink_to_kinect;
 		first = accumulated_transform;
-		vis_->camera("first")->color(dvo::visualization::Color::blue()).update(current->level(0), accumulated_transform).show();
+		// vis_->camera("first")->color(dvo::visualization::Color::blue()).update(current->level(0), accumulated_transform).show();
 		return;
 	}
 	Eigen::Affine3d transform;
@@ -181,8 +196,8 @@ void DepthNode::handleImages(
 	{
 		frames_since_last_success = 0;
 		accumulated_transform = accumulated_transform * transform;
-		vis_->trajectory("estimate")->color(dvo::visualization::Color::red()).add(accumulated_transform);
-		vis_->camera("current")->color(dvo::visualization::Color::red()).update(current->level(0), accumulated_transform).show();
+		// vis_->trajectory("estimate")->color(dvo::visualization::Color::red()).add(accumulated_transform);
+		// vis_->camera("current")->color(dvo::visualization::Color::red()).update(current->level(0), accumulated_transform).show();
 	}
 	else
 	{
@@ -190,12 +205,26 @@ void DepthNode::handleImages(
 		reference.swap(current);
 		ROS_WARN("fail");
 	}
-	publishPose(h, accumulated_transform * from_baselink_to_kinect.inverse(), "object_estimate");
+	// publishPose(h, accumulated_transform * from_baselink_to_kinect.inverse(), "object_estimate");
+	publishPose(h, transform, "object_estimate");
+}
+
+void DepthNode::roiSize(const geometry_msgs::Point::ConstPtr& data)
+{
+	roi_height = data->x;
+	roi_width = data->y;
+}
+
+void DepthNode::roiCentroid(const geometry_msgs::Point::ConstPtr& data)
+{
+	roi_centroid.x = data->x;
+	roi_centroid.y = data->y;
 }
 
 void DepthNode::publishPose(const std_msgs::Header& header, const Eigen::Affine3d& transform, const std::string frame)
 {
-  	TRACE()
+  	TRACE()  	
+  	std::cout << "Transform: \n" << transform.matrix() << "\n";
 	geometry_msgs::PoseWithCovarianceStampedPtr msg(new geometry_msgs::PoseWithCovarianceStamped);
 	static int seq = 1;
 	msg->header.seq = seq++;

@@ -15,6 +15,7 @@
   <depend>nodelet</depend>
   <depend>tf</depend>
   <depend>tf_conversions</depend>
+  <depend>geometry_msgs</depend>
   <depend>eigen_conversions</depend>
   <depend>pcl_ros</depend>
   <depend>sensor_msgs</depend>

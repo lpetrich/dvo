@@ -501,7 +501,7 @@ private:
 	void update(const ros::TimerEvent& e)
 	{
  		TRACE()
-		if(point_cloud_topic_.getNumSubscribers() == 0) return;
+		// if(point_cloud_topic_.getNumSubscribers() == 0) return;
 		dvo::visualization::AsyncPointCloudBuilder::PointCloud::Ptr cloud = point_cloud_aggregator_.build();
 		// VALGRIND_CHECK_VALUE_IS_DEFINED(cloud);
 		cloud->header.frame_id = "/world";

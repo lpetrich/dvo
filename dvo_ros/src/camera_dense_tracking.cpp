@@ -179,17 +179,17 @@ void CameraDenseTracker::handleConfig(dvo_ros::CameraDenseTrackerConfig& config,
 	{
 		vis_->reset();
 		delete vis_;
-		// vis_ = new dvo::visualization::NoopCameraTrajectoryVisualizer();
+		vis_ = new dvo::visualization::NoopCameraTrajectoryVisualizer();
 
-		if(config.reconstruction)
-		{
-			//vis_ = new dvo::visualization::PclCameraTrajectoryVisualizer();
-			vis_ = new dvo_ros::visualization::RosCameraTrajectoryVisualizer(nh_);
-		}
-		else
-		{
-			vis_ = new dvo::visualization::NoopCameraTrajectoryVisualizer();
-		}
+		// if(config.reconstruction)
+		// {
+		// 	//vis_ = new dvo::visualization::PclCameraTrajectoryVisualizer();
+		// 	vis_ = new dvo_ros::visualization::RosCameraTrajectoryVisualizer(nh_);
+		// }
+		// else
+		// {
+		// 	vis_ = new dvo::visualization::NoopCameraTrajectoryVisualizer();
+		// }
 	}
 }
 
@@ -212,6 +212,7 @@ void CameraDenseTracker::handleImages(
 		const sensor_msgs::CameraInfo::ConstPtr& depth_camera_info_msg
 )
 {
+	std::cout << "\tNEW FRAME" << "\n";
   	TRACE()
 	static stopwatch sw_callback("callback");
 	sw_callback.start();
@@ -274,7 +275,7 @@ void CameraDenseTracker::handleImages(
 		accumulated_transform = latest_absolute_transform_ * from_baselink_to_kinect;
 		first = accumulated_transform;
 
-		vis_->camera("first")->color(dvo::visualization::Color::blue()).update(current->level(0), accumulated_transform).show();
+		// vis_->camera("first")->color(dvo::visualization::Color::blue()).update(current->level(0), accumulated_transform).show();
 
 		return;
 	}
@@ -291,6 +292,7 @@ void CameraDenseTracker::handleImages(
 
 	if(success)
 	{
+
 		frames_since_last_success = 0;
 		accumulated_transform = accumulated_transform * transform;
 
@@ -300,8 +302,8 @@ void CameraDenseTracker::handleImages(
 
 		//std::cerr << covariance << std::endl << std::endl;
 
-		vis_->trajectory("estimate")->color(dvo::visualization::Color::red()).add(accumulated_transform);
-		vis_->camera("current")->color(dvo::visualization::Color::red()).update(current->level(0), accumulated_transform).show();
+		// vis_->trajectory("estimate")->color(dvo::visualization::Color::red()).add(accumulated_transform);
+		// vis_->camera("current")->color(dvo::visualization::Color::red()).update(current->level(0), accumulated_transform).show();
 	}
 	else
 	{
